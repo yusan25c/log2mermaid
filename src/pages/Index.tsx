@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { CsvInput } from "@/components/CsvInput";
 import { LogInput } from "@/components/LogInput";
 import { MermaidPreview } from "@/components/MermaidPreview";
-import { generateMermaidCode } from "@/lib/mermaidGenerator";
+import { generateMermaidCode, getMatchedLineIndices } from "@/lib/mermaidGenerator";
 import { FileText } from "lucide-react";
 
 const DEFAULT_CSV = `title,match,src,dst
@@ -24,6 +24,10 @@ const Index = () => {
 
   const mermaidCode = useMemo(() => {
     return generateMermaidCode(csvContent, logContent);
+  }, [csvContent, logContent]);
+
+  const matchedLineIndices = useMemo(() => {
+    return getMatchedLineIndices(csvContent, logContent);
   }, [csvContent, logContent]);
 
   return (
@@ -50,7 +54,7 @@ const Index = () => {
             <CsvInput value={csvContent} onChange={setCsvContent} />
           </div>
           <div className="flex-1 bg-card border border-border rounded-lg p-4 overflow-hidden">
-            <LogInput value={logContent} onChange={setLogContent} />
+            <LogInput value={logContent} onChange={setLogContent} matchedLineIndices={matchedLineIndices} />
           </div>
         </div>
 

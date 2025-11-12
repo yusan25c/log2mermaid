@@ -18,6 +18,35 @@ export const parseCsv = (csvContent: string): CsvRule[] => {
   return result.data;
 };
 
+export const getMatchedLineIndices = (
+  csvContent: string,
+  logContent: string
+): Set<number> => {
+  const rules = parseCsv(csvContent);
+  if (rules.length === 0 || !logContent.trim()) {
+    return new Set();
+  }
+
+  const logLines = logContent.split("\n");
+  const matchedIndices = new Set<number>();
+
+  logLines.forEach((line, index) => {
+    if (!line.trim()) return;
+    rules.forEach((rule) => {
+      try {
+        const regex = new RegExp(rule.match);
+        if (regex.test(line)) {
+          matchedIndices.add(index);
+        }
+      } catch (error) {
+        console.error(`Invalid regex pattern: ${rule.match}`, error);
+      }
+    });
+  });
+
+  return matchedIndices;
+};
+
 export const generateMermaidCode = (
   csvContent: string,
   logContent: string
