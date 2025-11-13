@@ -31,11 +31,10 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
 
   useEffect(() => {
     const renderDiagram = async () => {
-      // if (!editableCode || !containerRef.current) {
-      //   console.log("No code to render or no container");
-      //   setSvg("");
-      //   return;
-      // }
+      if (!editableCode) {
+        setSvg("");
+        return;
+      }
 
       try {
         console.log("Attempting to render Mermaid code:", editableCode);
