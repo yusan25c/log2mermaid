@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Copy, Download, ZoomIn, ZoomOut, Maximize2, RotateCcw, FileImage } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface MermaidPreviewProps {
   mermaidCode: string;
@@ -14,6 +15,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>("");
   const [editableCode, setEditableCode] = useState<string>(mermaidCode);
+  const [theme, setTheme] = useState<string>("default");
   const { toast } = useToast();
 
   // Update editable code when the generated code changes
@@ -25,10 +27,10 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
   useEffect(() => {
     mermaid.initialize({
       startOnLoad: false,
-      theme: "default",
+      theme: theme as any,
       securityLevel: "loose",
     });
-  }, []);
+  }, [theme]);
 
   useEffect(() => {
     const renderDiagram = async () => {
@@ -49,7 +51,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
     };
 
     renderDiagram();
-  }, [editableCode]);
+  }, [editableCode, theme]);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(editableCode);
@@ -129,9 +131,21 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
   return (
     <div className="flex flex-col h-full gap-4">
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-2 gap-2">
           <h3 className="text-sm font-medium">Preview</h3>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <Select value={theme} onValueChange={setTheme}>
+              <SelectTrigger className="w-[140px] h-8 text-sm">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border border-border z-50">
+                <SelectItem value="default">Default</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="forest">Forest</SelectItem>
+                <SelectItem value="neutral">Neutral</SelectItem>
+                <SelectItem value="base">Base</SelectItem>
+              </SelectContent>
+            </Select>
             <Button variant="outline" size="sm" onClick={downloadPng} disabled={!svg}>
               <FileImage className="h-4 w-4 mr-1" />
               PNG
