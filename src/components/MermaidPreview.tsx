@@ -76,27 +76,6 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
     <div className="flex flex-col h-full gap-4">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-medium">Mermaid Code</h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copyToClipboard}
-            disabled={!editableCode}
-          >
-            <Copy className="h-4 w-4 mr-1" />
-            Copy
-          </Button>
-        </div>
-        <Textarea
-          value={editableCode}
-          onChange={(e) => setEditableCode(e.target.value)}
-          className="flex-1 font-mono text-xs resize-none"
-          placeholder="Enter CSV rules and logs to generate Mermaid code..."
-        />
-      </div>
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-medium">Preview</h3>
           <Button
             variant="outline"
@@ -121,6 +100,27 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="flex flex-col overflow-hidden h-48">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium">Mermaid Code</h3>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={copyToClipboard}
+            disabled={!editableCode}
+          >
+            <Copy className="h-4 w-4 mr-1" />
+            Copy
+          </Button>
+        </div>
+        <Textarea
+          value={editableCode}
+          onChange={(e) => setEditableCode(e.target.value)}
+          className="flex-1 font-mono text-xs resize-none"
+          placeholder="Enter CSV rules and logs to generate Mermaid code..."
+        />
       </div>
     </div>
   );
