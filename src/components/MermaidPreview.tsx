@@ -156,14 +156,15 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
             </Button>
           </div>
         </div>
-        <div className="flex-1 bg-card border border-muted rounded-lg overflow-hidden">
+        <div className="flex-1 bg-card border border-muted rounded-lg overflow-hidden relative">
           {svg ? (
             <TransformWrapper
               initialScale={1.5}
               minScale={0.1}
               maxScale={4}
-              centerOnInit
-              centerZoomedOut
+              centerOnInit={true}
+              limitToBounds={false}
+              alignmentAnimation={{ sizeX: 0, sizeY: 0 }}
             >
               {({ zoomIn, zoomOut, resetTransform }) => (
                 <>
@@ -180,7 +181,13 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
                   </div>
                   <TransformComponent
                     wrapperStyle={{ width: "100%", height: "100%" }}
-                    contentStyle={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    contentStyle={{ 
+                      width: "100%", 
+                      height: "100%", 
+                      display: "flex", 
+                      alignItems: "center", 
+                      justifyContent: "center" 
+                    }}
                   >
                     <div
                       ref={containerRef}
