@@ -107,7 +107,7 @@ export const LogInput = ({ value, onChange, matchedLineIndices = new Set() }: Lo
             </div>
           </div>
         )}
-        <div className="absolute inset-0 overflow-auto font-mono text-sm">
+        <div className="absolute inset-0 overflow-auto font-mono text-sm whitespace-pre-wrap break-words">
           {highlightedContent}
         </div>
         <Textarea
@@ -115,7 +115,7 @@ export const LogInput = ({ value, onChange, matchedLineIndices = new Set() }: Lo
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Nov  2 12:34:56 : [12345678.012345] Component1 func:1245 hogehoge val 1&#10;Nov  2 12:34:56 : [12345678.012345] Component2 func:1245 str=abc val 1"
-          className="flex-1 h-full font-mono text-sm resize-none bg-transparent border-0 relative z-10 text-transparent caret-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 selection:bg-primary/20"
+          className="flex-1 h-full font-mono text-sm resize-none bg-transparent border-0 relative z-10 text-transparent caret-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 selection:bg-primary/20 whitespace-pre-wrap break-words"
         />
       </div>
     </div>
