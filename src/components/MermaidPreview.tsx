@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Download } from "lucide-react";
+import { Copy, Download, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 interface MermaidPreviewProps {
   mermaidCode: string;
@@ -82,13 +83,40 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
             SVG
           </Button>
         </div>
-        <div className="flex-1 bg-card border border-muted rounded-lg overflow-auto p-6">
+        <div className="flex-1 bg-card border border-muted rounded-lg overflow-hidden">
           {svg ? (
-            <div
-              ref={containerRef}
-              dangerouslySetInnerHTML={{ __html: svg }}
-              className="flex items-center justify-center min-h-full"
-            />
+            <TransformWrapper
+              initialScale={1}
+              minScale={0.1}
+              maxScale={4}
+              centerOnInit
+            >
+              {({ zoomIn, zoomOut, resetTransform }) => (
+                <>
+                  <div className="absolute top-2 right-2 z-10 flex gap-1 bg-background/80 backdrop-blur-sm rounded-lg p-1 border border-border">
+                    <Button variant="ghost" size="icon" onClick={() => zoomIn()}>
+                      <ZoomIn className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => zoomOut()}>
+                      <ZoomOut className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => resetTransform()}>
+                      <Maximize2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <TransformComponent
+                    wrapperStyle={{ width: "100%", height: "100%" }}
+                    contentStyle={{ width: "100%", height: "100%" }}
+                  >
+                    <div
+                      ref={containerRef}
+                      dangerouslySetInnerHTML={{ __html: svg }}
+                      className="flex items-center justify-center min-h-full p-6"
+                    />
+                  </TransformComponent>
+                </>
+              )}
+            </TransformWrapper>
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
               {editableCode ? "Rendering diagram..." : "Enter CSV rules and logs to generate diagram"}
