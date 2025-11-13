@@ -31,18 +31,15 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
 
   useEffect(() => {
     const renderDiagram = async () => {
-      if (!editableCode || !containerRef.current) {
-        console.log("No code to render or no container");
-        setSvg("");
-        return;
-      }
+      // if (!editableCode || !containerRef.current) {
+      //   console.log("No code to render or no container");
+      //   setSvg("");
+      //   return;
+      // }
 
       try {
         console.log("Attempting to render Mermaid code:", editableCode);
-        const { svg: renderedSvg } = await mermaid.render(
-          `mermaid-${Date.now()}`,
-          editableCode
-        );
+        const { svg: renderedSvg } = await mermaid.render(`mermaid-${Date.now()}`, editableCode);
         console.log("Successfully rendered SVG");
         setSvg(renderedSvg);
       } catch (error) {
@@ -81,12 +78,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-medium">Preview</h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={downloadSvg}
-            disabled={!svg}
-          >
+          <Button variant="outline" size="sm" onClick={downloadSvg} disabled={!svg}>
             <Download className="h-4 w-4 mr-1" />
             SVG
           </Button>
@@ -109,12 +101,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
       <div className="flex flex-col overflow-hidden h-48">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-medium">Mermaid Code</h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copyToClipboard}
-            disabled={!editableCode}
-          >
+          <Button variant="outline" size="sm" onClick={copyToClipboard} disabled={!editableCode}>
             <Copy className="h-4 w-4 mr-1" />
             Copy
           </Button>
