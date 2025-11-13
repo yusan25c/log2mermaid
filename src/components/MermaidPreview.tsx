@@ -90,6 +90,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
               minScale={0.1}
               maxScale={4}
               centerOnInit
+              centerZoomedOut
             >
               {({ zoomIn, zoomOut, resetTransform }) => (
                 <>
@@ -106,12 +107,11 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
                   </div>
                   <TransformComponent
                     wrapperStyle={{ width: "100%", height: "100%" }}
-                    contentStyle={{ width: "100%", height: "100%" }}
+                    contentStyle={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
                   >
                     <div
                       ref={containerRef}
                       dangerouslySetInnerHTML={{ __html: svg }}
-                      className="flex items-center justify-center min-h-full p-6"
                     />
                   </TransformComponent>
                 </>
