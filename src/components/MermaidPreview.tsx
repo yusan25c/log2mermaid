@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Download, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { Copy, Download, ZoomIn, ZoomOut, Maximize2, RotateCcw, FileImage } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
@@ -73,20 +73,79 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
     });
   };
 
+  const downloadPng = () => {
+    // Create a temporary container
+    const container = document.createElement("div");
+    container.innerHTML = svg;
+    const svgElement = container.querySelector("svg");
+    
+    if (!svgElement) return;
+
+    // Get SVG dimensions
+    const bbox = svgElement.getBBox();
+    const width = bbox.width;
+    const height = bbox.height;
+
+    // Create canvas
+    const canvas = document.createElement("canvas");
+    const scale = 2; // Higher resolution
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    const ctx = canvas.getContext("2d");
+    
+    if (!ctx) return;
+
+    // Scale for higher quality
+    ctx.scale(scale, scale);
+
+    // Convert SVG to image
+    const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+
+      // Download PNG
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const pngUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = pngUrl;
+        a.download = "sequence-diagram.png";
+        a.click();
+        URL.revokeObjectURL(pngUrl);
+        toast({
+          title: "Downloaded!",
+          description: "PNG file downloaded successfully",
+        });
+      });
+    };
+
+    img.src = url;
+  };
+
   return (
     <div className="flex flex-col h-full gap-4">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-medium">Preview</h3>
-          <Button variant="outline" size="sm" onClick={downloadSvg} disabled={!svg}>
-            <Download className="h-4 w-4 mr-1" />
-            SVG
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={downloadPng} disabled={!svg}>
+              <FileImage className="h-4 w-4 mr-1" />
+              PNG
+            </Button>
+            <Button variant="outline" size="sm" onClick={downloadSvg} disabled={!svg}>
+              <Download className="h-4 w-4 mr-1" />
+              SVG
+            </Button>
+          </div>
         </div>
         <div className="flex-1 bg-card border border-muted rounded-lg overflow-hidden">
           {svg ? (
             <TransformWrapper
-              initialScale={1}
+              initialScale={1.5}
               minScale={0.1}
               maxScale={4}
               centerOnInit
@@ -95,14 +154,14 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
               {({ zoomIn, zoomOut, resetTransform }) => (
                 <>
                   <div className="absolute top-2 right-2 z-10 flex gap-1 bg-background/80 backdrop-blur-sm rounded-lg p-1 border border-border">
+                    <Button variant="ghost" size="icon" onClick={() => resetTransform()}>
+                      <RotateCcw className="h-4 w-4" />
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => zoomIn()}>
                       <ZoomIn className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => zoomOut()}>
                       <ZoomOut className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => resetTransform()}>
-                      <Maximize2 className="h-4 w-4" />
                     </Button>
                   </div>
                   <TransformComponent
@@ -125,7 +184,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
         </div>
       </div>
 
-      <div className="flex flex-col overflow-hidden h-48">
+      <div className="flex flex-col overflow-hidden h-64">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-medium">Mermaid Code</h3>
           <Button variant="outline" size="sm" onClick={copyToClipboard} disabled={!editableCode}>

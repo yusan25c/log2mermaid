@@ -1,9 +1,10 @@
-import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Upload } from "lucide-react";
+import { Plus, Trash2, Upload, Download } from "lucide-react";
 import { useMemo, useState } from "react";
+import { Label } from "@/components/ui/label";
 import Papa from "papaparse";
 
 interface CsvInputProps {
@@ -20,6 +21,7 @@ interface CsvRow {
 
 export const CsvInput = ({ value, onChange }: CsvInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const { toast } = useToast();
   
   const rows = useMemo(() => {
     if (!value.trim()) return [];
@@ -90,11 +92,29 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
     }
   };
 
+  const downloadCsv = () => {
+    const blob = new Blob([value], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "mapping-rules.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({
+      title: "Downloaded!",
+      description: "CSV file downloaded successfully",
+    });
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-2">
         <Label className="text-sm font-medium">CSV Mapping Rules</Label>
         <div className="flex gap-2">
+          <Button onClick={downloadCsv} variant="outline" size="sm">
+            <Download className="h-4 w-4 mr-2" />
+            Download CSV
+          </Button>
           <label htmlFor="csv-file-input">
             <Button variant="outline" size="sm" asChild>
               <span className="cursor-pointer">
