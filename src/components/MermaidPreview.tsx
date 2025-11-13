@@ -17,6 +17,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
 
   // Update editable code when the generated code changes
   useEffect(() => {
+    console.log("Received mermaidCode:", mermaidCode);
     setEditableCode(mermaidCode);
   }, [mermaidCode]);
 
@@ -31,15 +32,18 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
   useEffect(() => {
     const renderDiagram = async () => {
       if (!editableCode || !containerRef.current) {
+        console.log("No code to render or no container");
         setSvg("");
         return;
       }
 
       try {
+        console.log("Attempting to render Mermaid code:", editableCode);
         const { svg: renderedSvg } = await mermaid.render(
           `mermaid-${Date.now()}`,
           editableCode
         );
+        console.log("Successfully rendered SVG");
         setSvg(renderedSvg);
       } catch (error) {
         console.error("Mermaid rendering error:", error);
