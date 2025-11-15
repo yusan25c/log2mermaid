@@ -31,14 +31,14 @@ const Index = () => {
   }, [csvContent, logContent]);
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-background via-background to-muted/30">
-      <header className="border-b border-border/50 backdrop-blur-sm bg-card/80 px-8 py-6 shadow-sm">
+    <div className="flex flex-col h-screen bg-background">
+      <header className="border-b border-border bg-card px-8 py-6 shadow-soft">
         <div className="flex items-center gap-4 animate-fade-in">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20">
+          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary shadow-medium">
             <FileText className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-foreground">
               Log to Mermaid Sequence Diagram
             </h1>
             <p className="text-sm text-muted-foreground mt-1">Generate beautiful sequence diagrams from log files automatically</p>
@@ -48,15 +48,15 @@ const Index = () => {
 
       <main className="flex-1 grid grid-cols-1 lg:grid-cols-[40%_60%] gap-6 p-6 overflow-hidden">
         <div className="flex flex-col gap-6 overflow-hidden animate-slide-up">
-          <div className="flex-1 bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
+          <div className="flex-1 bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
             <CsvInput value={csvContent} onChange={setCsvContent} />
           </div>
-          <div className="flex-1 bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
+          <div className="flex-1 bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
             <LogInput value={logContent} onChange={setLogContent} matchedLineIndices={matchedLineIndices} />
           </div>
         </div>
 
-        <div className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300 animate-slide-up" style={{animationDelay: '0.1s'}}>
+        <div className="bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300 animate-slide-up" style={{animationDelay: '0.1s'}}>
           <MermaidPreview mermaidCode={mermaidCode} />
         </div>
       </main>

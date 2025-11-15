@@ -146,7 +146,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
-        <Label className="text-base font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">CSV Mapping Rules</Label>
+        <Label className="text-base font-semibold text-foreground">CSV Mapping Rules</Label>
         <div className="flex gap-2">
           <Button onClick={downloadCsv} variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
@@ -174,8 +174,8 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
         </div>
       </div>
       <div 
-        className={`flex-1 overflow-auto rounded-xl relative transition-all duration-300 ${
-          isDragging ? "ring-2 ring-primary bg-gradient-to-br from-primary/10 to-accent/10" : "border border-border/50 bg-card/50"
+        className={`flex-1 overflow-auto rounded-lg relative transition-all duration-300 ${
+          isDragging ? "ring-2 ring-primary bg-primary/5" : "border border-border bg-background"
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -191,7 +191,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
         )}
         <div className="w-full min-w-max">
           <div 
-            className="flex sticky top-0 z-10 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 backdrop-blur-sm border-b-2 border-primary/20"
+            className="flex sticky top-0 z-10 bg-muted backdrop-blur-sm border-b border-border"
             style={{ 
               gridTemplateColumns: columnWidths.map(w => `${w}px`).join(' ')
             }}
