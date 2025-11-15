@@ -200,7 +200,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
         <Textarea
           value={editableCode}
           onChange={(e) => setEditableCode(e.target.value)}
-          className="flex-1 font-mono text-xs resize-none bg-background border-border rounded-lg"
+          className="flex-1 font-mono text-xs resize-none bg-background border-border rounded-lg whitespace-nowrap overflow-x-auto"
           placeholder="Enter CSV rules and logs to generate Mermaid code..."
         />
       </div>
