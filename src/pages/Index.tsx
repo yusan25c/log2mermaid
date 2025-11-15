@@ -3,8 +3,9 @@ import { CsvInput } from "@/components/CsvInput";
 import { LogInput } from "@/components/LogInput";
 import { MermaidPreview } from "@/components/MermaidPreview";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Button } from "@/components/ui/button";
 import { generateMermaidCode, getMatchedLineIndices } from "@/lib/mermaidGenerator";
-import { FileText } from "lucide-react";
+import { FileText, Github } from "lucide-react";
 
 const DEFAULT_CSV = `title,match,src,dst
 access,Component1 func:,Client,Web Server
@@ -46,7 +47,24 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              className="rounded-lg"
+            >
+              <a
+                href="https://github.com/yusan25c/log2mermaid-cli/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View CLI version on GitHub"
+              >
+                <Github className="h-5 w-5" />
+              </a>
+            </Button>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
