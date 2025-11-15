@@ -154,60 +154,60 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
         )}
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-[120px]">Title</TableHead>
-              <TableHead className="w-[200px]">Match Pattern</TableHead>
-              <TableHead className="w-[120px]">Source</TableHead>
-              <TableHead className="w-[120px]">Destination</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+            <TableRow className="border-b">
+              <TableHead className="w-[120px] h-8 py-2">Title</TableHead>
+              <TableHead className="w-[200px] h-8 py-2">Match Pattern</TableHead>
+              <TableHead className="w-[120px] h-8 py-2">Source</TableHead>
+              <TableHead className="w-[120px] h-8 py-2">Destination</TableHead>
+              <TableHead className="w-[50px] h-8 py-2"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                   No rules defined. Click "Add Row" to create one.
                 </TableCell>
               </TableRow>
             ) : (
               rows.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>
+                <TableRow key={index} className="border-b">
+                  <TableCell className="py-1 px-2">
                     <Input
                       value={row.title}
                       onChange={(e) => updateCell(index, "title", e.target.value)}
-                      className="h-8 font-mono text-sm"
+                      className="h-7 font-mono text-xs px-2"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-1 px-2">
                     <Input
                       value={row.match}
                       onChange={(e) => updateCell(index, "match", e.target.value)}
-                      className="h-8 font-mono text-sm"
+                      className="h-7 font-mono text-xs px-2"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-1 px-2">
                     <Input
                       value={row.src}
                       onChange={(e) => updateCell(index, "src", e.target.value)}
-                      className="h-8 font-mono text-sm"
+                      className="h-7 font-mono text-xs px-2"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-1 px-2">
                     <Input
                       value={row.dst}
                       onChange={(e) => updateCell(index, "dst", e.target.value)}
-                      className="h-8 font-mono text-sm"
+                      className="h-7 font-mono text-xs px-2"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-1 px-2">
                     <Button
                       onClick={() => deleteRow(index)}
                       size="sm"
                       variant="ghost"
-                      className="h-8 w-8 p-0"
+                      className="h-7 w-7 p-0"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </TableCell>
                 </TableRow>
