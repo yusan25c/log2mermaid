@@ -52,8 +52,8 @@ export const LogInput = ({ value, onChange, matchedLineIndices = new Set() }: Lo
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-2">
-        <Label htmlFor="log-input" className="text-sm font-medium">
+      <div className="flex items-center justify-between mb-4">
+        <Label htmlFor="log-input" className="text-base font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
           Log Content
         </Label>
         <label htmlFor="log-file-input">
@@ -73,8 +73,8 @@ export const LogInput = ({ value, onChange, matchedLineIndices = new Set() }: Lo
         />
       </div>
       <div 
-        className={`flex-1 relative overflow-hidden rounded-md border transition-colors ${
-          isDragging ? "border-primary bg-primary/5" : "border-input"
+        className={`flex-1 relative overflow-hidden rounded-xl border transition-all duration-300 ${
+          isDragging ? "border-primary bg-gradient-to-br from-primary/10 to-accent/10 shadow-lg" : "border-border/50 bg-card/50"
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}

@@ -131,8 +131,8 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
   return (
     <div className="flex flex-col h-full gap-4">
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between mb-2 gap-2">
-          <h3 className="text-sm font-medium">Preview</h3>
+          <div className="flex items-center justify-between mb-4 gap-2">
+          <h3 className="text-base font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Preview</h3>
           <div className="flex items-center gap-2">
             <Select value={theme} onValueChange={setTheme}>
               <SelectTrigger className="w-[140px] h-8 text-sm">
@@ -156,12 +156,12 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
             </Button>
           </div>
         </div>
-        <div className="flex-1 bg-card border border-muted rounded-lg overflow-hidden relative">
+        <div className="flex-1 bg-card/50 border border-border/50 rounded-xl overflow-hidden relative shadow-inner">
           {svg ? (
             <TransformWrapper initialScale={1} minScale={0.1} maxScale={4} centerOnInit={true} centerZoomedOut={true}>
               {({ zoomIn, zoomOut, resetTransform }) => (
                 <>
-                  <div className="absolute top-2 right-2 z-10 flex gap-1 bg-background/80 backdrop-blur-sm rounded-lg p-1 border border-border">
+                  <div className="absolute top-3 right-3 z-10 flex gap-1 bg-card/90 backdrop-blur-md rounded-xl p-1.5 border border-border/50 shadow-lg">
                     <Button variant="ghost" size="icon" onClick={() => resetTransform()}>
                       <RotateCcw className="h-4 w-4" />
                     </Button>
@@ -196,8 +196,8 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
       </div>
 
       <div className="flex flex-col overflow-hidden h-80">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-medium">Mermaid Code</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-base font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Mermaid Code</h3>
           <Button variant="outline" size="sm" onClick={copyToClipboard} disabled={!editableCode}>
             <Copy className="h-4 w-4 mr-1" />
             Copy
@@ -206,7 +206,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
         <Textarea
           value={editableCode}
           onChange={(e) => setEditableCode(e.target.value)}
-          className="flex-1 font-mono text-xs resize-none"
+          className="flex-1 font-mono text-xs resize-none bg-card/50 border-border/50 rounded-xl"
           placeholder="Enter CSV rules and logs to generate Mermaid code..."
         />
       </div>
