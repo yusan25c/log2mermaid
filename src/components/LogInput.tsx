@@ -1,7 +1,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Upload } from "lucide-react";
 
 interface LogInputProps {
@@ -12,6 +12,17 @@ interface LogInputProps {
 
 export const LogInput = ({ value, onChange, matchedLineIndices = new Set() }: LogInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const lineNumbersRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const lines = value.split('\n');
+  const lineCount = lines.length;
+
+  const handleScroll = () => {
+    if (lineNumbersRef.current && textareaRef.current) {
+      lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
+    }
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -87,13 +98,30 @@ export const LogInput = ({ value, onChange, matchedLineIndices = new Set() }: Lo
             </div>
           </div>
         )}
-        <Textarea
-          id="log-input"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Nov  2 12:34:56 : [12345678.012345] Component1 func:1245 hogehoge val 1&#10;Nov  2 12:34:56 : [12345678.012345] Component2 func:1245 str=abc val 1"
-          className="flex-1 h-full font-mono text-xs resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        />
+        <div className="flex h-full overflow-hidden">
+          <div
+            ref={lineNumbersRef}
+            className="flex-shrink-0 overflow-hidden bg-muted/30 border-r border-border px-2 py-2 font-mono text-xs text-muted-foreground select-none"
+            style={{ lineHeight: '1.5' }}
+          >
+            {Array.from({ length: lineCount }, (_, i) => (
+              <div key={i} className="text-right whitespace-nowrap">
+                {i + 1}
+              </div>
+            ))}
+          </div>
+          <Textarea
+            ref={textareaRef}
+            id="log-input"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onScroll={handleScroll}
+            placeholder="Nov  2 12:34:56 : [12345678.012345] Component1 func:1245 hogehoge val 1&#10;Nov  2 12:34:56 : [12345678.012345] Component2 func:1245 str=abc val 1"
+            className="flex-1 h-full font-mono text-xs resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 whitespace-nowrap overflow-x-auto border-0 rounded-none"
+            wrap="off"
+            style={{ lineHeight: '1.5' }}
+          />
+        </div>
       </div>
     </div>
   );
