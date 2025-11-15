@@ -38,17 +38,13 @@ const Index = () => {
             <FileText className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-foreground">
-              Log to Mermaid Sequence Diagram
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Generate sequence diagrams from log files automatically
-            </p>
+            <h1 className="text-xl font-semibold text-foreground">Log to Mermaid Sequence Diagram</h1>
+            <p className="text-sm text-muted-foreground">Generate sequence diagrams from log files automatically</p>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[35%_65%] gap-4 p-4 overflow-hidden">
+      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[40%_60%] gap-4 p-4 overflow-hidden">
         <div className="flex flex-col gap-4 overflow-hidden">
           <div className="flex-[0.4] bg-card border border-border rounded-lg p-3 overflow-hidden">
             <CsvInput value={csvContent} onChange={setCsvContent} />
