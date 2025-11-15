@@ -34,16 +34,16 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <header className="border-b border-border bg-card px-8 py-6 shadow-soft">
+      <header className="border-b border-border bg-card px-6 py-3 shadow-soft">
         <div className="flex items-center justify-between animate-fade-in">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary shadow-medium">
-              <FileText className="h-6 w-6 text-primary-foreground" />
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary shadow-medium">
+              <FileText className="h-4 w-4 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Log to Mermaid Sequence Diagram</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Generate beautiful sequence diagrams from log files automatically
+              <h1 className="text-lg font-bold text-foreground">log2mermaid</h1>
+              <p className="text-xs text-muted-foreground">
+                Generate sequence diagrams from log files
               </p>
             </div>
           </div>
