@@ -227,7 +227,9 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
             rows.map((row, index) => (
               <div 
                 key={index} 
-                className="flex group hover:bg-accent/30 transition-all duration-150 border-b border-border/30 last:border-b-0"
+                className={`flex group hover:bg-accent/50 transition-all duration-150 border-b border-border/50 ${
+                  index % 2 === 0 ? 'bg-muted/20' : 'bg-background'
+                }`}
                 style={{ 
                   gridTemplateColumns: columnWidths.map(w => `${w}px`).join(' ')
                 }}
