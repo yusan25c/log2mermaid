@@ -52,15 +52,14 @@ export const LogInput = ({ value, onChange, matchedLineIndices = new Set() }: Lo
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-4">
-        <Label htmlFor="log-input" className="text-base font-semibold text-foreground">
-          Log Content
+      <div className="flex items-center justify-between mb-3">
+        <Label htmlFor="log-input" className="text-sm font-semibold text-foreground">
+          Log
         </Label>
         <label htmlFor="log-file-input">
-          <Button variant="outline" size="sm" asChild>
-            <span className="cursor-pointer">
-              <Upload className="h-4 w-4 mr-2" />
-              Upload Log
+          <Button variant="outline" size="sm" asChild className="h-8 w-8 p-0">
+            <span className="cursor-pointer" title="Upload Log">
+              <Upload className="h-4 w-4" />
             </span>
           </Button>
         </label>

@@ -84,6 +84,19 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
     convertToCsv([...parsedRows, newRow]);
   };
 
+  // Always ensure there's an empty row at the end for adding new entries
+  const displayRows = useMemo(() => {
+    const hasEmptyRow = rows.length === 0 || rows.some(row => 
+      !row.title && !row.match && !row.src && !row.dst
+    );
+    
+    if (!hasEmptyRow && !searchQuery) {
+      return [...rows, { title: "", match: "", src: "", dst: "" }];
+    }
+    
+    return rows;
+  }, [rows, searchQuery]);
+
   const deleteRow = (rowIndex: number) => {
     const updatedRows = parsedRows.filter((_, index) => index !== rowIndex);
     convertToCsv(updatedRows);
@@ -208,54 +221,45 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-3">
-        <Label className="text-base font-semibold text-foreground">CSV Mapping Rules</Label>
-        <div className="flex gap-2">
-          <Button onClick={downloadCsv} variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Download CSV
-          </Button>
-          <label htmlFor="csv-file-input">
-            <Button variant="outline" size="sm" asChild>
-              <span className="cursor-pointer">
-                <Upload className="h-4 w-4 mr-2" />
-                Upload CSV
-              </span>
-            </Button>
-          </label>
-          <input
-            id="csv-file-input"
-            type="file"
-            accept=".csv,text/csv"
-            onChange={handleFileSelect}
-            className="hidden"
+      <div className="flex items-center gap-2 mb-3">
+        <Label className="text-sm font-semibold text-foreground">Mapping</Label>
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 pr-9 h-8 text-sm"
           />
-          <Button onClick={addRow} size="sm" variant="outline">
-            <Plus className="h-4 w-4 mr-1" />
-            Add Row
-          </Button>
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-muted"
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          )}
         </div>
-      </div>
-      
-      <div className="relative mb-3">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Search in all columns..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9 pr-9 h-9 text-sm"
-        />
-        {searchQuery && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSearchQuery("")}
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-muted"
-          >
-            <X className="h-3.5 w-3.5" />
+        <Button onClick={downloadCsv} variant="outline" size="sm" className="h-8 w-8 p-0" title="Download CSV">
+          <Download className="h-4 w-4" />
+        </Button>
+        <label htmlFor="csv-file-input">
+          <Button variant="outline" size="sm" asChild className="h-8 w-8 p-0">
+            <span className="cursor-pointer" title="Upload CSV">
+              <Upload className="h-4 w-4" />
+            </span>
           </Button>
-        )}
+        </label>
+        <input
+          id="csv-file-input"
+          type="file"
+          accept=".csv,text/csv"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
       </div>
       <div 
         className={`flex-1 overflow-auto rounded-lg relative transition-all duration-300 ${
@@ -321,18 +325,19 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
               </div>
             ))}
           </div>
-          {rows.length === 0 ? (
+          {displayRows.length === 0 ? (
             <div className="text-center text-muted-foreground py-16 text-sm">
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted/50 mb-3">
                 <Plus className="h-6 w-6" />
               </div>
-              <p>No rules defined. Click "Add Row" to create one.</p>
+              <p>No rules defined. Start typing in the empty row below.</p>
             </div>
           ) : (
-            rows.map((row, index) => {
+            displayRows.map((row, index) => {
               const originalIndex = parsedRows.findIndex(r => 
                 r.title === row.title && r.match === row.match && r.src === row.src && r.dst === row.dst
               );
+              const isNewRow = originalIndex === -1;
               return (
               <div 
                 key={index} 
@@ -346,7 +351,16 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                 <div
                   contentEditable
                   suppressContentEditableWarning
-                  onBlur={(e) => updateCell(originalIndex, "title", e.currentTarget.textContent || "")}
+                  onBlur={(e) => {
+                    const newValue = e.currentTarget.textContent || "";
+                    if (isNewRow && newValue) {
+                      addRow();
+                      const newIndex = parsedRows.length;
+                      setTimeout(() => updateCell(newIndex, "title", newValue), 0);
+                    } else if (!isNewRow) {
+                      updateCell(originalIndex, "title", newValue);
+                    }
+                  }}
                   className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[0] }}
                 >
@@ -355,7 +369,16 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                 <div
                   contentEditable
                   suppressContentEditableWarning
-                  onBlur={(e) => updateCell(originalIndex, "match", e.currentTarget.textContent || "")}
+                  onBlur={(e) => {
+                    const newValue = e.currentTarget.textContent || "";
+                    if (isNewRow && newValue) {
+                      addRow();
+                      const newIndex = parsedRows.length;
+                      setTimeout(() => updateCell(newIndex, "match", newValue), 0);
+                    } else if (!isNewRow) {
+                      updateCell(originalIndex, "match", newValue);
+                    }
+                  }}
                   className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[1] }}
                 >
@@ -364,7 +387,16 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                 <div
                   contentEditable
                   suppressContentEditableWarning
-                  onBlur={(e) => updateCell(originalIndex, "src", e.currentTarget.textContent || "")}
+                  onBlur={(e) => {
+                    const newValue = e.currentTarget.textContent || "";
+                    if (isNewRow && newValue) {
+                      addRow();
+                      const newIndex = parsedRows.length;
+                      setTimeout(() => updateCell(newIndex, "src", newValue), 0);
+                    } else if (!isNewRow) {
+                      updateCell(originalIndex, "src", newValue);
+                    }
+                  }}
                   className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[2] }}
                 >
@@ -373,31 +405,44 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                 <div
                   contentEditable
                   suppressContentEditableWarning
-                  onBlur={(e) => updateCell(originalIndex, "dst", e.currentTarget.textContent || "")}
+                  onBlur={(e) => {
+                    const newValue = e.currentTarget.textContent || "";
+                    if (isNewRow && newValue) {
+                      addRow();
+                      const newIndex = parsedRows.length;
+                      setTimeout(() => updateCell(newIndex, "dst", newValue), 0);
+                    } else if (!isNewRow) {
+                      updateCell(originalIndex, "dst", newValue);
+                    }
+                  }}
                   className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[3] }}
                 >
                   {row.dst}
                 </div>
                 <div className="flex items-center justify-center gap-1 px-2 py-2" style={{ width: columnWidths[4] }}>
-                  <Button
-                    onClick={() => duplicateRow(originalIndex)}
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-primary/10 hover:text-primary transition-all"
-                    title="Duplicate row"
-                  >
-                    <Copy className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    onClick={() => deleteRow(originalIndex)}
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-all"
-                    title="Delete row"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                  {!isNewRow && (
+                    <>
+                      <Button
+                        onClick={() => duplicateRow(originalIndex)}
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-primary/10 hover:text-primary transition-all"
+                        title="Duplicate row"
+                      >
+                        <Copy className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        onClick={() => deleteRow(originalIndex)}
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-all"
+                        title="Delete row"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             );
