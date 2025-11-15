@@ -2,7 +2,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Upload, Download, GripVertical } from "lucide-react";
+import { Plus, Trash2, Upload, Download, GripVertical, Copy, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import Papa from "papaparse";
@@ -19,15 +19,20 @@ interface CsvRow {
   dst: string;
 }
 
+type SortField = keyof CsvRow | null;
+type SortDirection = 'asc' | 'desc' | null;
+
 export const CsvInput = ({ value, onChange }: CsvInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [columnWidths, setColumnWidths] = useState([180, 280, 150, 150, 60]);
+  const [columnWidths, setColumnWidths] = useState([180, 280, 150, 150, 90]);
   const [resizingIndex, setResizingIndex] = useState<number | null>(null);
+  const [sortField, setSortField] = useState<SortField>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const resizeStartX = useRef(0);
   const resizeStartWidth = useRef(0);
   const { toast } = useToast();
   
-  const rows = useMemo(() => {
+  const parsedRows = useMemo(() => {
     if (!value.trim()) return [];
     const result = Papa.parse<CsvRow>(value, {
       header: true,
@@ -36,20 +41,49 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
     return result.data;
   }, [value]);
 
+  const rows = useMemo(() => {
+    if (!sortField || !sortDirection) return parsedRows;
+    
+    const sorted = [...parsedRows].sort((a, b) => {
+      const aVal = a[sortField] || '';
+      const bVal = b[sortField] || '';
+      
+      if (sortDirection === 'asc') {
+        return aVal.localeCompare(bVal);
+      } else {
+        return bVal.localeCompare(aVal);
+      }
+    });
+    
+    return sorted;
+  }, [parsedRows, sortField, sortDirection]);
+
   const updateCell = (rowIndex: number, field: keyof CsvRow, newValue: string) => {
-    const updatedRows = [...rows];
+    const updatedRows = [...parsedRows];
     updatedRows[rowIndex] = { ...updatedRows[rowIndex], [field]: newValue };
     convertToCsv(updatedRows);
   };
 
   const addRow = () => {
     const newRow: CsvRow = { title: "", match: "", src: "", dst: "" };
-    convertToCsv([...rows, newRow]);
+    convertToCsv([...parsedRows, newRow]);
   };
 
   const deleteRow = (rowIndex: number) => {
-    const updatedRows = rows.filter((_, index) => index !== rowIndex);
+    const updatedRows = parsedRows.filter((_, index) => index !== rowIndex);
     convertToCsv(updatedRows);
+  };
+
+  const duplicateRow = (rowIndex: number) => {
+    const rowToDuplicate = parsedRows[rowIndex];
+    const duplicatedRow = { ...rowToDuplicate };
+    const updatedRows = [...parsedRows];
+    updatedRows.splice(rowIndex + 1, 0, duplicatedRow);
+    convertToCsv(updatedRows);
+    toast({
+      title: "Row duplicated",
+      description: "The row has been duplicated successfully",
+    });
   };
 
   const convertToCsv = (data: CsvRow[]) => {
@@ -129,6 +163,20 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
     }
   }, [resizingIndex, columnWidths]);
 
+  const handleSort = (field: keyof CsvRow) => {
+    if (sortField === field) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortField(null);
+        setSortDirection(null);
+      }
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
   const downloadCsv = () => {
     const blob = new Blob([value], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -196,13 +244,34 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
               gridTemplateColumns: columnWidths.map(w => `${w}px`).join(' ')
             }}
           >
-            {['Title', 'Match Pattern', 'Source', 'Destination', ''].map((header, idx) => (
+            {[
+              { label: 'Title', field: 'title' as keyof CsvRow },
+              { label: 'Match Pattern', field: 'match' as keyof CsvRow },
+              { label: 'Source', field: 'src' as keyof CsvRow },
+              { label: 'Destination', field: 'dst' as keyof CsvRow },
+              { label: '', field: null }
+            ].map((header, idx) => (
               <div 
                 key={idx}
-                className="relative flex items-center px-3 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-r border-border/30 last:border-r-0"
+                className={`relative flex items-center px-3 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-r border-border/30 last:border-r-0 ${
+                  header.field ? 'cursor-pointer hover:bg-accent/30 transition-colors' : ''
+                }`}
                 style={{ width: columnWidths[idx] }}
+                onClick={() => header.field && handleSort(header.field)}
               >
-                {header}
+                <span className="flex items-center gap-1.5">
+                  {header.label}
+                  {header.field && sortField === header.field && (
+                    sortDirection === 'asc' ? (
+                      <ArrowUp className="h-3 w-3 text-primary" />
+                    ) : (
+                      <ArrowDown className="h-3 w-3 text-primary" />
+                    )
+                  )}
+                  {header.field && sortField !== header.field && (
+                    <ArrowUpDown className="h-3 w-3 opacity-30" />
+                  )}
+                </span>
                 {idx < 4 && (
                   <div
                     className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 active:bg-primary transition-colors group"
@@ -224,7 +293,11 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
               <p>No rules defined. Click "Add Row" to create one.</p>
             </div>
           ) : (
-            rows.map((row, index) => (
+            rows.map((row, index) => {
+              const originalIndex = parsedRows.findIndex(r => 
+                r.title === row.title && r.match === row.match && r.src === row.src && r.dst === row.dst
+              );
+              return (
               <div 
                 key={index} 
                 className={`flex group hover:bg-accent/50 transition-all duration-150 border-b border-border/50 ${
@@ -237,7 +310,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                 <div
                   contentEditable
                   suppressContentEditableWarning
-                  onBlur={(e) => updateCell(index, "title", e.currentTarget.textContent || "")}
+                  onBlur={(e) => updateCell(originalIndex, "title", e.currentTarget.textContent || "")}
                   className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[0] }}
                 >
@@ -246,7 +319,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                 <div
                   contentEditable
                   suppressContentEditableWarning
-                  onBlur={(e) => updateCell(index, "match", e.currentTarget.textContent || "")}
+                  onBlur={(e) => updateCell(originalIndex, "match", e.currentTarget.textContent || "")}
                   className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[1] }}
                 >
@@ -255,7 +328,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                 <div
                   contentEditable
                   suppressContentEditableWarning
-                  onBlur={(e) => updateCell(index, "src", e.currentTarget.textContent || "")}
+                  onBlur={(e) => updateCell(originalIndex, "src", e.currentTarget.textContent || "")}
                   className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[2] }}
                 >
@@ -264,24 +337,35 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                 <div
                   contentEditable
                   suppressContentEditableWarning
-                  onBlur={(e) => updateCell(index, "dst", e.currentTarget.textContent || "")}
+                  onBlur={(e) => updateCell(originalIndex, "dst", e.currentTarget.textContent || "")}
                   className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[3] }}
                 >
                   {row.dst}
                 </div>
-                <div className="flex items-center justify-center px-2 py-2" style={{ width: columnWidths[4] }}>
+                <div className="flex items-center justify-center gap-1 px-2 py-2" style={{ width: columnWidths[4] }}>
                   <Button
-                    onClick={() => deleteRow(index)}
+                    onClick={() => duplicateRow(originalIndex)}
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-primary/10 hover:text-primary transition-all"
+                    title="Duplicate row"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    onClick={() => deleteRow(originalIndex)}
                     size="sm"
                     variant="ghost"
                     className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-all"
+                    title="Delete row"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
-            ))
+            );
+            })
           )}
         </div>
       </div>
