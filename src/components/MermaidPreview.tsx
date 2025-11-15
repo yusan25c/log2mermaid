@@ -6,6 +6,7 @@ import { Copy, Download, ZoomIn, ZoomOut, Maximize2, RotateCcw, FileImage } from
 import { useToast } from "@/hooks/use-toast";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { logger } from "@/lib/logger";
 
 interface MermaidPreviewProps {
   mermaidCode: string;
@@ -20,7 +21,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
 
   // Update editable code when the generated code changes
   useEffect(() => {
-    console.log("Received mermaidCode:", mermaidCode);
+    logger.log("Received mermaidCode:", mermaidCode);
     setEditableCode(mermaidCode);
   }, [mermaidCode]);
 
@@ -45,19 +46,19 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
       }
 
       try {
-        console.log("Attempting to render Mermaid code:", editableCode);
+        logger.log("Attempting to render Mermaid code:", editableCode);
         containerRef.current.innerHTML = "";
 
         if (await mermaid.parse(editableCode)) {
           const { svg, bindFunctions } = await mermaid.render(`mermaid-${Date.now()}`, editableCode);
           containerRef.current.innerHTML = svg;
           bindFunctions?.(containerRef.current);
-          console.log("Successfully rendered SVG");
+          logger.log("Successfully rendered SVG");
           setHasDiagram(true);
         }
 
       } catch (error) {
-        console.error("Mermaid rendering error:", error);
+        logger.error("Mermaid rendering error:", error);
         if (containerRef.current) {
           containerRef.current.innerHTML = "";
         }
