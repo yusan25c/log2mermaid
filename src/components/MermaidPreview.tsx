@@ -146,13 +146,8 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
                 <SelectItem value="base">Base</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm" onClick={downloadPng} disabled={!svg}>
-              <FileImage className="h-4 w-4 mr-1" />
-              PNG
-            </Button>
-            <Button variant="outline" size="sm" onClick={downloadSvg} disabled={!svg}>
-              <Download className="h-4 w-4 mr-1" />
-              SVG
+            <Button variant="outline" size="icon" className="h-8 w-8" onClick={downloadPng} disabled={!svg}>
+              <FileImage className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -198,9 +193,8 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
       <div className="flex-[3] flex flex-col overflow-hidden">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-semibold text-foreground">Mermaid Code</h3>
-          <Button variant="outline" size="sm" onClick={copyToClipboard} disabled={!editableCode}>
-            <Copy className="h-4 w-4 mr-1" />
-            Copy
+          <Button variant="outline" size="icon" className="h-8 w-8" onClick={copyToClipboard} disabled={!editableCode}>
+            <Copy className="h-4 w-4" />
           </Button>
         </div>
         <Textarea
