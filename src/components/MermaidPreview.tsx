@@ -130,7 +130,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
 
   return (
     <div className="flex flex-col h-full gap-4">
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-[7] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between mb-4 gap-2">
           <h3 className="text-base font-semibold text-foreground">Preview</h3>
           <div className="flex items-center gap-2">
@@ -195,7 +195,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
         </div>
       </div>
 
-      <div className="flex flex-col overflow-hidden h-80">
+      <div className="flex-[3] flex flex-col overflow-hidden">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-semibold text-foreground">Mermaid Code</h3>
           <Button variant="outline" size="sm" onClick={copyToClipboard} disabled={!editableCode}>
