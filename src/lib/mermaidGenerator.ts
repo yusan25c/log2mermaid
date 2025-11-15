@@ -1,4 +1,6 @@
 import Papa from "papaparse";
+import safeRegex from "safe-regex";
+import { logger } from "./logger";
 
 interface CsvRule {
   title: string;
@@ -6,6 +8,15 @@ interface CsvRule {
   src: string;
   dst: string;
 }
+
+const isRegexSafe = (pattern: string): boolean => {
+  try {
+    // Check if pattern is safe and not too long
+    return safeRegex(pattern) && pattern.length < 200;
+  } catch {
+    return false;
+  }
+};
 
 export const parseCsv = (csvContent: string): CsvRule[] => {
   if (!csvContent.trim()) return [];
@@ -34,12 +45,16 @@ export const getMatchedLineIndices = (
     if (!line.trim()) return;
     rules.forEach((rule) => {
       try {
+        if (!isRegexSafe(rule.match)) {
+          logger.error(`Unsafe regex pattern rejected: ${rule.match}`);
+          return;
+        }
         const regex = new RegExp(rule.match);
         if (regex.test(line)) {
           matchedIndices.add(index);
         }
       } catch (error) {
-        console.error(`Invalid regex pattern: ${rule.match}`, error);
+        logger.error(`Invalid regex pattern: ${rule.match}`, error);
       }
     });
   });
@@ -62,6 +77,10 @@ export const generateMermaidCode = (
   logLines.forEach((line, index) => {
     rules.forEach((rule) => {
       try {
+        if (!isRegexSafe(rule.match)) {
+          logger.error(`Unsafe regex pattern rejected: ${rule.match}`);
+          return;
+        }
         const regex = new RegExp(rule.match);
         if (regex.test(line)) {
           interactions.push({
@@ -73,7 +92,7 @@ export const generateMermaidCode = (
           });
         }
       } catch (error) {
-        console.error(`Invalid regex pattern: ${rule.match}`, error);
+        logger.error(`Invalid regex pattern: ${rule.match}`, error);
       }
     });
   });
