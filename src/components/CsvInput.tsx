@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Upload, Download, GripVertical } from "lucide-react";
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import Papa from "papaparse";
 
@@ -98,6 +98,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
 
   const handleResizeStart = (index: number, e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setResizingIndex(index);
     resizeStartX.current = e.clientX;
     resizeStartWidth.current = columnWidths[index];
@@ -117,7 +118,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
     setResizingIndex(null);
   };
 
-  useMemo(() => {
+  useEffect(() => {
     if (resizingIndex !== null) {
       document.addEventListener('mousemove', handleResizeMove);
       document.addEventListener('mouseup', handleResizeEnd);
@@ -126,7 +127,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
         document.removeEventListener('mouseup', handleResizeEnd);
       };
     }
-  }, [resizingIndex]);
+  }, [resizingIndex, columnWidths]);
 
   const downloadCsv = () => {
     const blob = new Blob([value], { type: "text/csv" });
@@ -198,7 +199,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
             {['Title', 'Match Pattern', 'Source', 'Destination', ''].map((header, idx) => (
               <div 
                 key={idx}
-                className="relative flex items-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-r border-border/30 last:border-r-0"
+                className="relative flex items-center px-3 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-r border-border/30 last:border-r-0"
                 style={{ width: columnWidths[idx] }}
               >
                 {header}
@@ -235,7 +236,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={(e) => updateCell(index, "title", e.currentTarget.textContent || "")}
-                  className="px-4 py-3 text-sm font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all"
+                  className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[0] }}
                 >
                   {row.title}
@@ -244,7 +245,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={(e) => updateCell(index, "match", e.currentTarget.textContent || "")}
-                  className="px-4 py-3 text-sm font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all"
+                  className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[1] }}
                 >
                   {row.match}
@@ -253,7 +254,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={(e) => updateCell(index, "src", e.currentTarget.textContent || "")}
-                  className="px-4 py-3 text-sm font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all"
+                  className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[2] }}
                 >
                   {row.src}
@@ -262,12 +263,12 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={(e) => updateCell(index, "dst", e.currentTarget.textContent || "")}
-                  className="px-4 py-3 text-sm font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all"
+                  className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
                   style={{ width: columnWidths[3] }}
                 >
                   {row.dst}
                 </div>
-                <div className="flex items-center justify-center px-2 py-3" style={{ width: columnWidths[4] }}>
+                <div className="flex items-center justify-center px-2 py-2" style={{ width: columnWidths[4] }}>
                   <Button
                     onClick={() => deleteRow(index)}
                     size="sm"
