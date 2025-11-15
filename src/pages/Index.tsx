@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { CsvInput } from "@/components/CsvInput";
 import { LogInput } from "@/components/LogInput";
 import { MermaidPreview } from "@/components/MermaidPreview";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { generateMermaidCode, getMatchedLineIndices } from "@/lib/mermaidGenerator";
 import { FileText } from "lucide-react";
 
@@ -33,16 +34,19 @@ const Index = () => {
   return (
     <div className="flex flex-col h-screen bg-background">
       <header className="border-b border-border bg-card px-8 py-6 shadow-soft">
-        <div className="flex items-center gap-4 animate-fade-in">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary shadow-medium">
-            <FileText className="h-6 w-6 text-primary-foreground" />
+        <div className="flex items-center justify-between animate-fade-in">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary shadow-medium">
+              <FileText className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">
+                Log to Mermaid Sequence Diagram
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">Generate beautiful sequence diagrams from log files automatically</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Log to Mermaid Sequence Diagram
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">Generate beautiful sequence diagrams from log files automatically</p>
-          </div>
+          <ThemeToggle />
         </div>
       </header>
 
