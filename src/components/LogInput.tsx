@@ -93,7 +93,7 @@ export const LogInput = ({ value, onChange, matchedLineIndices = new Set() }: Lo
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Nov  2 12:34:56 : [12345678.012345] Component1 func:1245 hogehoge val 1&#10;Nov  2 12:34:56 : [12345678.012345] Component2 func:1245 str=abc val 1"
-          className="flex-1 h-full font-mono text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="flex-1 h-full font-mono text-xs resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
       </div>
     </div>
