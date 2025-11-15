@@ -13,7 +13,7 @@ interface MermaidPreviewProps {
 
 export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [svg, setSvg] = useState<string>("");
+  const [hasDiagram, setHasDiagram] = useState(false);
   const [editableCode, setEditableCode] = useState<string>(mermaidCode);
   const [theme, setTheme] = useState<string>("default");
   const { toast } = useToast();
@@ -28,25 +28,36 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
     mermaid.initialize({
       startOnLoad: false,
       theme: theme as any,
-      securityLevel: "loose",
+      securityLevel: "strict",
     });
   }, [theme]);
 
   useEffect(() => {
     const renderDiagram = async () => {
+      if (!containerRef.current) {
+        return;
+      }
+
       if (!editableCode) {
-        setSvg("");
+        containerRef.current.innerHTML = "";
+        setHasDiagram(false);
         return;
       }
 
       try {
         console.log("Attempting to render Mermaid code:", editableCode);
-        const { svg: renderedSvg } = await mermaid.render(`mermaid-${Date.now()}`, editableCode);
+        containerRef.current.innerHTML = "";
+        const { svg, bindFunctions } = await mermaid.render(`mermaid-${Date.now()}`, editableCode);
+        containerRef.current.innerHTML = svg;
+        bindFunctions?.(containerRef.current);
         console.log("Successfully rendered SVG");
-        setSvg(renderedSvg);
+        setHasDiagram(true);
       } catch (error) {
         console.error("Mermaid rendering error:", error);
-        setSvg("");
+        if (containerRef.current) {
+          containerRef.current.innerHTML = "";
+        }
+        setHasDiagram(false);
       }
     };
 
@@ -62,7 +73,13 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
   };
 
   const downloadSvg = () => {
-    const blob = new Blob([svg], { type: "image/svg+xml" });
+    const svgElement = containerRef.current?.querySelector("svg");
+    if (!svgElement) return;
+
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svgElement);
+
+    const blob = new Blob([svgString], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -76,17 +93,13 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
   };
 
   const downloadPng = () => {
-    // Create a temporary container
-    const container = document.createElement("div");
-    container.innerHTML = svg;
-    const svgElement = container.querySelector("svg");
-
+    const svgElement = containerRef.current?.querySelector("svg");
     if (!svgElement) return;
 
     // Get SVG dimensions
     const bbox = svgElement.getBBox();
-    const width = bbox.width;
-    const height = bbox.height;
+    const width = bbox.width || 800;
+    const height = bbox.height || 600;
 
     // Create canvas
     const canvas = document.createElement("canvas");
@@ -101,7 +114,9 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
     ctx.scale(scale, scale);
 
     // Convert SVG to image
-    const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svgElement);
+    const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(svgBlob);
     const img = new Image();
 
@@ -146,16 +161,16 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
                 <SelectItem value="base">Base</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="icon" className="h-8 w-8" onClick={downloadPng} disabled={!svg}>
+            <Button variant="outline" size="icon" className="h-8 w-8" onClick={downloadPng} disabled={!hasDiagram}>
               <FileImage className="h-4 w-4" />
             </Button>
           </div>
         </div>
         <div className="flex-1 bg-background border border-border rounded-lg overflow-hidden relative">
-          {svg ? (
-            <TransformWrapper initialScale={1} minScale={0.1} maxScale={4} centerOnInit={true} centerZoomedOut={true}>
-              {({ zoomIn, zoomOut, resetTransform }) => (
-                <>
+          <TransformWrapper initialScale={1} minScale={0.1} maxScale={4} centerOnInit={true} centerZoomedOut={true}>
+            {({ zoomIn, zoomOut, resetTransform }) => (
+              <>
+                {hasDiagram && (
                   <div className="absolute top-3 right-3 z-10 flex gap-1 bg-card border border-border rounded-lg p-1.5 shadow-medium">
                     <Button variant="ghost" size="icon" onClick={() => resetTransform()}>
                       <RotateCcw className="h-4 w-4" />
@@ -167,26 +182,29 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
                       <ZoomOut className="h-4 w-4" />
                     </Button>
                   </div>
-                  <TransformComponent
-                    wrapperStyle={{ width: "100%", height: "100%" }}
-                    contentStyle={{
-                      width: "100%",
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div ref={containerRef} dangerouslySetInnerHTML={{ __html: svg }} />
-                  </TransformComponent>
-                </>
-              )}
-            </TransformWrapper>
-          ) : (
-            <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-              {editableCode ? "Rendering diagram..." : "Enter CSV rules and logs to generate diagram"}
-            </div>
-          )}
+                )}
+                <TransformComponent
+                  wrapperStyle={{ width: "100%", height: "100%" }}
+                  contentStyle={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <div ref={containerRef} className="w-full h-full" />
+                    {!hasDiagram && (
+                      <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
+                        {editableCode ? "Rendering diagram..." : "Enter CSV rules and logs to generate diagram"}
+                      </div>
+                    )}
+                  </div>
+                </TransformComponent>
+              </>
+            )}
+          </TransformWrapper>
         </div>
       </div>
 
