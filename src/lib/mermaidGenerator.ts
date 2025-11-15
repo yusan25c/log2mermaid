@@ -89,6 +89,7 @@ export const generateMermaidCode = (
   });
 
   let mermaidCode = "sequenceDiagram\n";
+  mermaidCode += "    autonumber\n";
   
   participants.forEach((participant) => {
     mermaidCode += `    participant ${participant}\n`;
