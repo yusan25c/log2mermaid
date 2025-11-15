@@ -159,12 +159,11 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
         <div className="flex-1 bg-card border border-muted rounded-lg overflow-hidden relative">
           {svg ? (
             <TransformWrapper
-              initialScale={1.5}
+              initialScale={1}
               minScale={0.1}
               maxScale={4}
               centerOnInit={true}
-              limitToBounds={false}
-              alignmentAnimation={{ sizeX: 0, sizeY: 0 }}
+              centerZoomedOut={true}
             >
               {({ zoomIn, zoomOut, resetTransform }) => (
                 <>
