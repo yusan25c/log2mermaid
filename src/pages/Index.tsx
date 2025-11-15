@@ -17,7 +17,7 @@ Nov  2 12:34:56 : [12345678.012345] hogehoge2 func exec
 Nov  2 12:34:56 : [12345678.012345] Component2 func:1245 str=abc val 1
 Nov  2 12:34:56 : [12345678.012345] Component2 func:1245 str=def val 2
 Nov  2 12:34:56 : [12345678.012345] hogehoge function ret: 0
-Nov  2 12:34:56 : [12345678.012345] Component3 str=abc val 1`;
+Nov  2 12:34:56 : [12345678.012345] Component3 func:1245 str=abc val 1`;
 
 const Index = () => {
   const [csvContent, setCsvContent] = useState(DEFAULT_CSV);
@@ -40,10 +40,10 @@ const Index = () => {
               <FileText className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">
-                Log to Mermaid Sequence Diagram
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">Generate beautiful sequence diagrams from log files automatically</p>
+              <h1 className="text-2xl font-bold text-foreground">Log to Mermaid Sequence Diagram</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Generate beautiful sequence diagrams from log files automatically
+              </p>
             </div>
           </div>
           <ThemeToggle />
@@ -60,7 +60,10 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300 animate-slide-up" style={{animationDelay: '0.1s'}}>
+        <div
+          className="bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300 animate-slide-up"
+          style={{ animationDelay: "0.1s" }}
+        >
           <MermaidPreview mermaidCode={mermaidCode} />
         </div>
       </main>
