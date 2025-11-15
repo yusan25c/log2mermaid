@@ -57,9 +57,9 @@ export const generateMermaidCode = (
   }
 
   const logLines = logContent.split("\n").filter((line) => line.trim());
-  const interactions: Array<{ src: string; dst: string; title: string }> = [];
+  const interactions: Array<{ src: string; dst: string; title: string, lineIndex: number, line: string }> = [];
 
-  logLines.forEach((line) => {
+  logLines.forEach((line, index) => {
     rules.forEach((rule) => {
       try {
         const regex = new RegExp(rule.match);
@@ -68,6 +68,8 @@ export const generateMermaidCode = (
             src: rule.src,
             dst: rule.dst,
             title: rule.title,
+            lineIndex: index,
+            line: line,
           });
         }
       } catch (error) {
@@ -94,6 +96,7 @@ export const generateMermaidCode = (
 
   interactions.forEach((interaction) => {
     mermaidCode += `    ${interaction.src}->>${interaction.dst}: ${interaction.title}\n`;
+    mermaidCode += `    note over ${interaction.src},${interaction.dst}: L${interaction.lineIndex + 1} : ${interaction.line}\n`;
   });
 
   return mermaidCode;
