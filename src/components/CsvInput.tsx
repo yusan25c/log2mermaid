@@ -152,69 +152,70 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
             </div>
           </div>
         )}
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b">
-              <TableHead className="w-[120px] h-8 py-2">Title</TableHead>
-              <TableHead className="w-[200px] h-8 py-2">Match Pattern</TableHead>
-              <TableHead className="w-[120px] h-8 py-2">Source</TableHead>
-              <TableHead className="w-[120px] h-8 py-2">Destination</TableHead>
-              <TableHead className="w-[50px] h-8 py-2"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                  No rules defined. Click "Add Row" to create one.
-                </TableCell>
-              </TableRow>
-            ) : (
-              rows.map((row, index) => (
-                <TableRow key={index} className="border-b">
-                  <TableCell className="py-1 px-2">
-                    <Input
-                      value={row.title}
-                      onChange={(e) => updateCell(index, "title", e.target.value)}
-                      className="h-7 font-mono text-xs px-2"
-                    />
-                  </TableCell>
-                  <TableCell className="py-1 px-2">
-                    <Input
-                      value={row.match}
-                      onChange={(e) => updateCell(index, "match", e.target.value)}
-                      className="h-7 font-mono text-xs px-2"
-                    />
-                  </TableCell>
-                  <TableCell className="py-1 px-2">
-                    <Input
-                      value={row.src}
-                      onChange={(e) => updateCell(index, "src", e.target.value)}
-                      className="h-7 font-mono text-xs px-2"
-                    />
-                  </TableCell>
-                  <TableCell className="py-1 px-2">
-                    <Input
-                      value={row.dst}
-                      onChange={(e) => updateCell(index, "dst", e.target.value)}
-                      className="h-7 font-mono text-xs px-2"
-                    />
-                  </TableCell>
-                  <TableCell className="py-1 px-2">
-                    <Button
-                      onClick={() => deleteRow(index)}
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 w-7 p-0"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <div className="w-full">
+          <div className="grid grid-cols-[120px_200px_120px_120px_50px] border-b border-border bg-muted/50">
+            <div className="px-3 py-2 text-xs font-medium border-r border-border">Title</div>
+            <div className="px-3 py-2 text-xs font-medium border-r border-border">Match Pattern</div>
+            <div className="px-3 py-2 text-xs font-medium border-r border-border">Source</div>
+            <div className="px-3 py-2 text-xs font-medium border-r border-border">Destination</div>
+            <div className="px-3 py-2 text-xs font-medium"></div>
+          </div>
+          {rows.length === 0 ? (
+            <div className="text-center text-muted-foreground py-8 text-sm">
+              No rules defined. Click "Add Row" to create one.
+            </div>
+          ) : (
+            rows.map((row, index) => (
+              <div 
+                key={index} 
+                className="grid grid-cols-[120px_200px_120px_120px_50px] border-b border-border hover:bg-muted/30 transition-colors"
+              >
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => updateCell(index, "title", e.currentTarget.textContent || "")}
+                  className="px-3 py-2 text-xs font-mono border-r border-border focus:outline-none focus:bg-primary/5 cursor-text min-h-[28px]"
+                >
+                  {row.title}
+                </div>
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => updateCell(index, "match", e.currentTarget.textContent || "")}
+                  className="px-3 py-2 text-xs font-mono border-r border-border focus:outline-none focus:bg-primary/5 cursor-text min-h-[28px]"
+                >
+                  {row.match}
+                </div>
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => updateCell(index, "src", e.currentTarget.textContent || "")}
+                  className="px-3 py-2 text-xs font-mono border-r border-border focus:outline-none focus:bg-primary/5 cursor-text min-h-[28px]"
+                >
+                  {row.src}
+                </div>
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => updateCell(index, "dst", e.currentTarget.textContent || "")}
+                  className="px-3 py-2 text-xs font-mono border-r border-border focus:outline-none focus:bg-primary/5 cursor-text min-h-[28px]"
+                >
+                  {row.dst}
+                </div>
+                <div className="flex items-center justify-center px-1 py-2">
+                  <Button
+                    onClick={() => deleteRow(index)}
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0 hover:bg-destructive/10"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
