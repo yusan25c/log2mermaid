@@ -4,7 +4,6 @@ import { LogInput } from "@/components/LogInput";
 import { MermaidPreview } from "@/components/MermaidPreview";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { generateMermaidCode, getMatchedLineIndices } from "@/lib/mermaidGenerator";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { FileText } from "lucide-react";
 
 const DEFAULT_CSV = `title,match,src,dst
@@ -51,25 +50,19 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="flex-1 p-6 overflow-hidden">
-        <ResizablePanelGroup direction="horizontal" className="gap-6">
-          <ResizablePanel defaultSize={30} minSize={20} className="flex flex-col gap-6 overflow-hidden animate-slide-up">
-            <div className="flex-1 bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
-              <CsvInput value={csvContent} onChange={setCsvContent} />
-            </div>
-            <div className="flex-1 bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
-              <LogInput value={logContent} onChange={setLogContent} matchedLineIndices={matchedLineIndices} />
-            </div>
-          </ResizablePanel>
-          
-          <ResizableHandle withHandle />
-          
-          <ResizablePanel defaultSize={70} minSize={40} className="overflow-hidden">
-            <div className="h-full bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300 animate-slide-up" style={{animationDelay: '0.1s'}}>
-              <MermaidPreview mermaidCode={mermaidCode} />
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[40%_60%] gap-6 p-6 overflow-hidden">
+        <div className="flex flex-col gap-6 overflow-hidden animate-slide-up">
+          <div className="flex-1 bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
+            <CsvInput value={csvContent} onChange={setCsvContent} />
+          </div>
+          <div className="flex-1 bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
+            <LogInput value={logContent} onChange={setLogContent} matchedLineIndices={matchedLineIndices} />
+          </div>
+        </div>
+
+        <div className="bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300 animate-slide-up" style={{animationDelay: '0.1s'}}>
+          <MermaidPreview mermaidCode={mermaidCode} />
+        </div>
       </main>
     </div>
   );
