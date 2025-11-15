@@ -47,11 +47,15 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
       try {
         console.log("Attempting to render Mermaid code:", editableCode);
         containerRef.current.innerHTML = "";
-        const { svg, bindFunctions } = await mermaid.render(`mermaid-${Date.now()}`, editableCode);
-        containerRef.current.innerHTML = svg;
-        bindFunctions?.(containerRef.current);
-        console.log("Successfully rendered SVG");
-        setHasDiagram(true);
+
+        if (await mermaid.parse(editableCode)) {
+          const { svg, bindFunctions } = await mermaid.render(`mermaid-${Date.now()}`, editableCode);
+          containerRef.current.innerHTML = svg;
+          bindFunctions?.(containerRef.current);
+          console.log("Successfully rendered SVG");
+          setHasDiagram(true);
+        }
+
       } catch (error) {
         console.error("Mermaid rendering error:", error);
         if (containerRef.current) {
