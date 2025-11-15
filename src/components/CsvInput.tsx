@@ -2,7 +2,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Upload, Download, GripVertical, Copy, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Trash2, Upload, Download, GripVertical, Copy, ArrowUpDown, ArrowUp, ArrowDown, Search, X } from "lucide-react";
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import Papa from "papaparse";
@@ -28,6 +28,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
   const [resizingIndex, setResizingIndex] = useState<number | null>(null);
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const resizeStartX = useRef(0);
   const resizeStartWidth = useRef(0);
   const { toast } = useToast();
@@ -42,9 +43,23 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
   }, [value]);
 
   const rows = useMemo(() => {
-    if (!sortField || !sortDirection) return parsedRows;
+    let filtered = parsedRows;
     
-    const sorted = [...parsedRows].sort((a, b) => {
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = parsedRows.filter(row => 
+        row.title.toLowerCase().includes(query) ||
+        row.match.toLowerCase().includes(query) ||
+        row.src.toLowerCase().includes(query) ||
+        row.dst.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply sorting
+    if (!sortField || !sortDirection) return filtered;
+    
+    const sorted = [...filtered].sort((a, b) => {
       const aVal = a[sortField] || '';
       const bVal = b[sortField] || '';
       
@@ -56,7 +71,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
     });
     
     return sorted;
-  }, [parsedRows, sortField, sortDirection]);
+  }, [parsedRows, sortField, sortDirection, searchQuery]);
 
   const updateCell = (rowIndex: number, field: keyof CsvRow, newValue: string) => {
     const updatedRows = [...parsedRows];
@@ -193,7 +208,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         <Label className="text-base font-semibold text-foreground">CSV Mapping Rules</Label>
         <div className="flex gap-2">
           <Button onClick={downloadCsv} variant="outline" size="sm">
@@ -220,6 +235,27 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
             Add Row
           </Button>
         </div>
+      </div>
+      
+      <div className="relative mb-3">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Search in all columns..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9 pr-9 h-9 text-sm"
+        />
+        {searchQuery && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSearchQuery("")}
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-muted"
+          >
+            <X className="h-3.5 w-3.5" />
+          </Button>
+        )}
       </div>
       <div 
         className={`flex-1 overflow-auto rounded-lg relative transition-all duration-300 ${
