@@ -46,10 +46,10 @@ const Index = () => {
 
       <main className="flex-1 grid grid-cols-1 lg:grid-cols-[40%_60%] gap-4 p-4 overflow-hidden">
         <div className="flex flex-col gap-4 overflow-hidden">
-          <div className="flex-[0.4] bg-card border border-border rounded-lg p-3 overflow-hidden">
+          <div className="flex-1 bg-card border border-border rounded-lg p-4 overflow-hidden">
             <CsvInput value={csvContent} onChange={setCsvContent} />
           </div>
-          <div className="flex-[0.4] bg-card border border-border rounded-lg p-3 overflow-hidden">
+          <div className="flex-1 bg-card border border-border rounded-lg p-4 overflow-hidden">
             <LogInput value={logContent} onChange={setLogContent} matchedLineIndices={matchedLineIndices} />
           </div>
         </div>
