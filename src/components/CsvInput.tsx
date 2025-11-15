@@ -24,7 +24,7 @@ type SortDirection = 'asc' | 'desc' | null;
 
 export const CsvInput = ({ value, onChange }: CsvInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [columnWidths, setColumnWidths] = useState([180, 280, 150, 150, 90]);
+  const [columnWidths, setColumnWidths] = useState([140, 220, 120, 120, 80]);
   const [resizingIndex, setResizingIndex] = useState<number | null>(null);
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
@@ -293,7 +293,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
             ].map((header, idx) => (
               <div 
                 key={idx}
-                className={`relative flex items-center px-3 py-2.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-r border-border/30 last:border-r-0 ${
+                className={`relative flex items-center px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-r border-border/30 last:border-r-0 ${
                   header.field ? 'cursor-pointer hover:bg-accent/30 transition-colors' : ''
                 }`}
                 style={{ width: columnWidths[idx] }}
@@ -361,7 +361,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                       updateCell(originalIndex, "title", newValue);
                     }
                   }}
-                  className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
+                  className="px-2 py-1 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[28px] flex items-center"
                   style={{ width: columnWidths[0] }}
                 >
                   {row.title}
@@ -379,7 +379,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                       updateCell(originalIndex, "match", newValue);
                     }
                   }}
-                  className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
+                  className="px-2 py-1 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[28px] flex items-center"
                   style={{ width: columnWidths[1] }}
                 >
                   {row.match}
@@ -397,7 +397,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                       updateCell(originalIndex, "src", newValue);
                     }
                   }}
-                  className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
+                  className="px-2 py-1 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[28px] flex items-center"
                   style={{ width: columnWidths[2] }}
                 >
                   {row.src}
@@ -415,7 +415,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                       updateCell(originalIndex, "dst", newValue);
                     }
                   }}
-                  className="px-3 py-2 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[32px] flex items-center"
+                  className="px-2 py-1 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[28px] flex items-center"
                   style={{ width: columnWidths[3] }}
                 >
                   {row.dst}
