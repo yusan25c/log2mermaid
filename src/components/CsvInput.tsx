@@ -24,7 +24,7 @@ type SortDirection = 'asc' | 'desc' | null;
 
 export const CsvInput = ({ value, onChange }: CsvInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [columnWidths, setColumnWidths] = useState([140, 220, 120, 120, 80]);
+  const [columnWidths, setColumnWidths] = useState([80, 200, 100, 100, 70]);
   const [resizingIndex, setResizingIndex] = useState<number | null>(null);
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);

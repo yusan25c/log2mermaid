@@ -34,7 +34,7 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <header className="border-b border-border bg-card px-6 py-3 shadow-soft">
+      <header className="border-b border-border bg-card px-6 py-2 shadow-soft">
         <div className="flex items-center justify-between animate-fade-in">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary shadow-medium">
@@ -68,18 +68,18 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[40%_60%] gap-6 p-6 overflow-hidden">
-        <div className="flex flex-col gap-6 overflow-hidden animate-slide-up">
-          <div className="flex-1 bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
+      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[50%_50%] gap-2 p-4 overflow-hidden">
+        <div className="flex flex-col gap-2 overflow-hidden animate-slide-up">
+          <div className="flex-1 bg-card border border-border rounded-lg p-4 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
             <CsvInput value={csvContent} onChange={setCsvContent} />
           </div>
-          <div className="flex-1 bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
+          <div className="flex-1 bg-card border border-border rounded-lg p-4 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300">
             <LogInput value={logContent} onChange={setLogContent} matchedLineIndices={matchedLineIndices} />
           </div>
         </div>
 
         <div
-          className="bg-card border border-border rounded-lg p-6 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300 animate-slide-up"
+          className="bg-card border border-border rounded-lg p-4 overflow-hidden shadow-soft hover:shadow-medium transition-shadow duration-300 animate-slide-up"
           style={{ animationDelay: "0.1s" }}
         >
           <MermaidPreview mermaidCode={mermaidCode} />
