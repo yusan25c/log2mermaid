@@ -195,7 +195,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
         </div>
       </div>
 
-      <div className="flex flex-col overflow-hidden h-100">
+      <div className="flex flex-col overflow-hidden h-60">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-medium">Mermaid Code</h3>
           <Button variant="outline" size="sm" onClick={copyToClipboard} disabled={!editableCode}>
