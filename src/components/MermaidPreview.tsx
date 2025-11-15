@@ -80,7 +80,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
     const container = document.createElement("div");
     container.innerHTML = svg;
     const svgElement = container.querySelector("svg");
-    
+
     if (!svgElement) return;
 
     // Get SVG dimensions
@@ -94,7 +94,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
     canvas.width = width * scale;
     canvas.height = height * scale;
     const ctx = canvas.getContext("2d");
-    
+
     if (!ctx) return;
 
     // Scale for higher quality
@@ -158,13 +158,7 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
         </div>
         <div className="flex-1 bg-card border border-muted rounded-lg overflow-hidden relative">
           {svg ? (
-            <TransformWrapper
-              initialScale={0.7}
-              minScale={0.1}
-              maxScale={4}
-              centerOnInit={true}
-              centerZoomedOut={true}
-            >
+            <TransformWrapper initialScale={1} minScale={0.1} maxScale={4} centerOnInit={true} centerZoomedOut={true}>
               {({ zoomIn, zoomOut, resetTransform }) => (
                 <>
                   <div className="absolute top-2 right-2 z-10 flex gap-1 bg-background/80 backdrop-blur-sm rounded-lg p-1 border border-border">
@@ -180,18 +174,15 @@ export const MermaidPreview = ({ mermaidCode }: MermaidPreviewProps) => {
                   </div>
                   <TransformComponent
                     wrapperStyle={{ width: "100%", height: "100%" }}
-                    contentStyle={{ 
-                      width: "100%", 
-                      height: "100%", 
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "center" 
+                    contentStyle={{
+                      width: "100%",
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    <div
-                      ref={containerRef}
-                      dangerouslySetInnerHTML={{ __html: svg }}
-                    />
+                    <div ref={containerRef} dangerouslySetInnerHTML={{ __html: svg }} />
                   </TransformComponent>
                 </>
               )}
