@@ -7,18 +7,27 @@ import { Button } from "@/components/ui/button";
 import { generateMermaidCode, getMatchedLineIndices } from "@/lib/mermaidGenerator";
 import { FileText, Github } from "lucide-react";
 
-const DEFAULT_CSV = `title,match,src,dst
-access,Component1 func:,Client,Web Server
-request,Component2 func:.* str=abc,Web Server,API Server
-notify,Component3 func:.* str=abc,API Server,Web Server`;
+const DEFAULT_CSV = `title,match,src,dst,kind
+requestMessage,Sample1 .* requestMessage,Sample1,Sample2,message
+notifyMessage,Sample2 .* notifyMessage,Sample2,Sample1,message
+requestMessage,Sample2 .* requestMessage,Sample2,Sample3,message
+notifyMessage,Sample3 .* notifyMessage,Sample3,Sample2,message
+State:Executing,Sample2 State:.* -> 1,Sample2,,note
+state:Executing,Sample3 State:.* -> 1,Sample3,,note`;
 
-const DEFAULT_LOG = `Nov  2 12:34:56 : [12345678.012345] hogehoge function exec
-Nov  2 12:34:56 : [12345678.012345] Component1 func:1245 hogehoge val 1
-Nov  2 12:34:56 : [12345678.012345] hogehoge2 func exec
-Nov  2 12:34:56 : [12345678.012345] Component2 func:1245 str=abc val 1
-Nov  2 12:34:56 : [12345678.012345] Component2 func:1245 str=def val 2
-Nov  2 12:34:56 : [12345678.012345] hogehoge function ret: 0
-Nov  2 12:34:56 : [12345678.012345] Component3 func:1245 str=abc val 1`;
+const DEFAULT_LOG = `Nov  2 12:34:56 : [12345678.012345] hogehoge1
+Nov  2 12:34:56 : [12345678.012345] hogehoge2
+Nov  2 12:34:56 : [12345678.012345] Sample1 func:1245 requestMessage msg:helloWorld
+Nov  2 12:34:56 : [12345678.012345] hogehoge3
+Nov  2 12:34:56 : [12345678.012345] Sample2 State:0 -> 1
+Nov  2 12:34:56 : [12345678.012345] hogehoge4
+Nov  2 12:34:56 : [12345678.012345] Sample2 func:1245 requestMessage msg:helloWorld
+Nov  2 12:34:56 : [12345678.012345] Sample3 State:0 -> 1
+Nov  2 12:34:56 : [12345678.012345] hogehoge5
+Nov  2 12:34:56 : [12345678.012345] hogehoge6
+Nov  2 12:34:56 : [12345678.012345] Sample3 func:1245 notifyMessage val:0
+Nov  2 12:34:56 : [12345678.012345] Sample2 func:1245 notifyMessage val:0
+Nov  2 12:34:56 : [12345678.012345] hogehoge7`;
 
 const Index = () => {
   const [csvContent, setCsvContent] = useState(DEFAULT_CSV);
