@@ -17,6 +17,7 @@ interface CsvRow {
   match: string;
   src: string;
   dst: string;
+  kind: string;
 }
 
 type SortField = keyof CsvRow | null;
@@ -24,7 +25,7 @@ type SortDirection = 'asc' | 'desc' | null;
 
 export const CsvInput = ({ value, onChange }: CsvInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [columnWidths, setColumnWidths] = useState([80, 200, 100, 100, 70]);
+  const [columnWidths, setColumnWidths] = useState([80, 200, 100, 100, 80, 70]);
   const [resizingIndex, setResizingIndex] = useState<number | null>(null);
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
@@ -52,7 +53,8 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
         row.title.toLowerCase().includes(query) ||
         row.match.toLowerCase().includes(query) ||
         row.src.toLowerCase().includes(query) ||
-        row.dst.toLowerCase().includes(query)
+        row.dst.toLowerCase().includes(query) ||
+        (row.kind || '').toLowerCase().includes(query)
       );
     }
     
@@ -80,18 +82,18 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
   };
 
   const addRow = () => {
-    const newRow: CsvRow = { title: "", match: "", src: "", dst: "" };
+    const newRow: CsvRow = { title: "", match: "", src: "", dst: "", kind: "message" };
     convertToCsv([...parsedRows, newRow]);
   };
 
   // Always ensure there's an empty row at the end for adding new entries
   const displayRows = useMemo(() => {
     const hasEmptyRow = rows.length === 0 || rows.some(row => 
-      !row.title && !row.match && !row.src && !row.dst
+      !row.title && !row.match && !row.src && !row.dst && !row.kind
     );
     
     if (!hasEmptyRow && !searchQuery) {
-      return [...rows, { title: "", match: "", src: "", dst: "" }];
+      return [...rows, { title: "", match: "", src: "", dst: "", kind: "" }];
     }
     
     return rows;
@@ -116,7 +118,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
 
   const convertToCsv = (data: CsvRow[]) => {
     const csv = Papa.unparse(data, {
-      columns: ["title", "match", "src", "dst"],
+      columns: ["title", "match", "src", "dst", "kind"],
     });
     onChange(csv);
   };
@@ -289,6 +291,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
               { label: 'Match Pattern', field: 'match' as keyof CsvRow },
               { label: 'Source', field: 'src' as keyof CsvRow },
               { label: 'Destination', field: 'dst' as keyof CsvRow },
+              { label: 'Kind', field: 'kind' as keyof CsvRow },
               { label: '', field: null }
             ].map((header, idx) => (
               <div 
@@ -312,7 +315,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                     <ArrowUpDown className="h-3 w-3 opacity-30" />
                   )}
                 </span>
-                {idx < 4 && (
+                {idx < 5 && (
                   <div
                     className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 active:bg-primary transition-colors group"
                     onMouseDown={(e) => handleResizeStart(idx, e)}
@@ -335,7 +338,7 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
           ) : (
             displayRows.map((row, index) => {
               const originalIndex = parsedRows.findIndex(r => 
-                r.title === row.title && r.match === row.match && r.src === row.src && r.dst === row.dst
+                r.title === row.title && r.match === row.match && r.src === row.src && r.dst === row.dst && r.kind === row.kind
               );
               const isNewRow = originalIndex === -1;
               return (
@@ -420,7 +423,25 @@ export const CsvInput = ({ value, onChange }: CsvInputProps) => {
                 >
                   {row.dst}
                 </div>
-                <div className="flex items-center justify-center gap-1 px-2 py-2" style={{ width: columnWidths[4] }}>
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => {
+                    const newValue = e.currentTarget.textContent || "";
+                    if (isNewRow && newValue) {
+                      addRow();
+                      const newIndex = parsedRows.length;
+                      setTimeout(() => updateCell(newIndex, "kind", newValue), 0);
+                    } else if (!isNewRow) {
+                      updateCell(originalIndex, "kind", newValue);
+                    }
+                  }}
+                  className="px-2 py-1 text-xs font-mono border-r border-border/20 focus:outline-none focus:bg-primary/5 focus:ring-1 focus:ring-primary/20 cursor-text transition-all min-h-[28px] flex items-center"
+                  style={{ width: columnWidths[4] }}
+                >
+                  {row.kind || 'message'}
+                </div>
+                <div className="flex items-center justify-center gap-1 px-2 py-2" style={{ width: columnWidths[5] }}>
                   {!isNewRow && (
                     <>
                       <Button
